@@ -65,7 +65,7 @@
 
 <script>
 import { db } from './firebaseConfig.js';
-import { ,doc,setDoc} from 'https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js';
+import { doc,setDoc} from 'https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js';
   
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -73,7 +73,7 @@ const logEl = document.getElementById('log');
 const snapBtn = document.getElementById('snapBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('fileInput');
-const studObj = JSON.parse(dtb.getItem('currentUser'));
+const studObj = JSON.parse(localStorage.getItem('currentUser'));
 
 function log(msg) {
   logEl.innerText = msg;
