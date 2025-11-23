@@ -122,7 +122,7 @@ function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
 async function uploadToCloudinary(blob) {
   const formData = new FormData();
   formData.append('file', blob);
-  formData.append('upload_preset', 'YOUR_UNSIGNED_PRESET');
+  formData.append('upload_preset', 'verifo');
 
   log('Uploading...');
   try {
