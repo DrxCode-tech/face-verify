@@ -126,7 +126,7 @@ async function uploadToCloudinary(blob) {
 
   log('Uploading...');
   try {
-    const res = await fetch('https://api.cloudinary.com/v1_1/cloudinary://955319194136152:HB4P6JD321xq_pyGYtr99Eq87po@dykvuhosr/image/upload', {
+    const res = await fetch('https://api.cloudinary.com/v1_1/dykvuhosr/image/upload', {
       method: 'POST',
       body: formData
     });
