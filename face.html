@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Offline Face Verification</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    video { border: 1px solid #ddd; border-radius: 6px; }
+    #status { font-weight: bold; margin-bottom: 10px; }
+    #log { white-space: pre-wrap; background:#f8f8f8; padding:10px; margin-top:10px; max-height:200px; overflow:auto; }
+  </style>
+  <script defer src="./face-api.min.js"></script>
+</head>
+<body>
+  <h2>Offline Face Verification</h2>
+  <div id="status">Status: initializing...</div>
+  <video id="video" width="320" height="240" autoplay muted></video>
+  <div style="margin-top:8px;">
+    <button id="verifyBtn">Verify Face</button>
+  </div>
+  <p id="result"></p>
+  <div id="log"></div>
+
+<script>
+  const logEl = document.getElementById('log');
+  const st = id => document.getElementById('status').innerText = id;
+  function log(...args){
+    console.log(...args);
+    logEl.textContent += args.join(' ') + '\n';
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  const MODELS_URI = './models';
+  const REFERENCE_IMAGE = './reference.jpg';
+  const THRESHOLD = 0.45; // lower = stricter match
+  let referenceDescriptor = null;
+
+  async function loadModels() {
+    st('loading models...');
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODELS_URI),
+      faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URI),
+      faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URI)
+    ]);
+    st('models loaded');
+    log('Models loaded successfully');
+  }
+
+  async function startCamera() {
+    st('starting camera...');
+    const video = document.getElementById('video');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    return new Promise(resolve => video.onloadedmetadata = () => resolve(video));
+  }
+
+  async function loadReferenceImage() {
+    st('loading reference image...');
+    const img = await faceapi.fetchImage(REFERENCE_IMAGE);
+    const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+    if (!detection) throw new Error('No face found in reference image. Use a clear frontal face.');
+    referenceDescriptor = detection.descriptor;
+    st('reference image loaded');
+    log('Reference descriptor ready');
+  }
+
+  async function verifyFace() {
+    st('verifying...');
+    const video = document.getElementById('video');
+    const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+    if (!detection) {
+      document.getElementById('result').innerText = 'No face detected on camera. Move closer or improve lighting.';
+      st('no face detected');
+      log('No face detected from camera');
+      return;
+    }
+    const distance = faceapi.euclideanDistance(referenceDescriptor, detection.descriptor);
+    log('Distance:', distance);
+    if (distance < THRESHOLD) {
+      document.getElementById('result').innerText = `MATCH ✅ (distance ${distance.toFixed(3)})`;
+      st('verified');
+    } else {
+      document.getElementById('result').innerText = `NO MATCH ❌ (distance ${distance.toFixed(3)})`;
+      st('not matching');
+    }
+  }
+
+  async function init() {
+    try {
+      if(location.protocol === 'file:') log('⚠️ Run this on localhost server, not file://, to avoid model load issues.');
+      await loadModels();
+      await startCamera();
+      await loadReferenceImage();
+      st('ready — press "Verify Face"');
+    } catch (err) {
+      log('Initialization error:', err);
+      st('error during init — check log');
+    }
+  }
+
+  document.getElementById('verifyBtn').onclick = verifyFace;
+  window.addEventListener('load', init);
+</script>
+</body>
+</html>
