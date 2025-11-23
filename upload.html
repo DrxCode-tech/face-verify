@@ -140,7 +140,7 @@ async function uploadToCloudinary(blob) {
     //studObj.referencePic = data.secure_url;
     
     //localStorage.setItem("currentUser",JSON.stringify(studObj));
-    const reg = (studObj.regNm).replace(/\//g,'-');
+    const reg = (studObj["regNm"]).replace(/\//g,'-');
     const docm = doc(db,"UNIUYO",studObj.level,studObj.dept,reg);
     await setDoc(docm,{
       referencePic : data.secure_url
@@ -149,6 +149,7 @@ async function uploadToCloudinary(blob) {
     localStorage.setItem('currentUser',JSON.stringify(student.data()));
     console.log('Uploaded URL:', data.secure_url);
     log('Upload successful! URL: ' + data.secure_url);
+    window.location.href = "https://ade-xpage.vercel.app/V3ADEX.html";
   } catch (err) {
     log('Upload failed: ' + err);
   }
