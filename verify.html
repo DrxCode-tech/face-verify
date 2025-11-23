@@ -72,7 +72,8 @@
   function log(...args) { logEl.textContent += args.join(' ') + '\n'; logEl.scrollTop = logEl.scrollHeight; }
 
   const MODELS_URI = './models';
-  const REFERENCE_IMAGE = './dan.jpg';
+  const image = localStorage.getItem("urrl");
+  const REFERENCE_IMAGE = image;
   const THRESHOLD = 0.45;
   let referenceDescriptor = null;
 

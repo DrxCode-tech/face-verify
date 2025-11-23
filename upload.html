@@ -132,6 +132,7 @@ async function uploadToCloudinary(blob) {
     });
     const data = await res.json();
     log('Upload successful! URL: ' + data.secure_url);
+    localStorage.setItem("urrl",data.secure_url);
     console.log('Uploaded URL:', data.secure_url);
   } catch (err) {
     log('Upload failed: ' + err);
