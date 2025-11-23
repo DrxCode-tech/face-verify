@@ -64,12 +64,16 @@
 <div id="log">Status: waiting...</div>
 
 <script>
+import { db } from './firebaseConfig.js';
+import { ,doc,setDoc} from 'https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js';
+  
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const logEl = document.getElementById('log');
 const snapBtn = document.getElementById('snapBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('fileInput');
+const studObj = JSON.parse(dtb.getItem('currentUser'));
 
 function log(msg) {
   logEl.innerText = msg;
@@ -131,9 +135,14 @@ async function uploadToCloudinary(blob) {
       body: formData
     });
     const data = await res.json();
-    log('Upload successful! URL: ' + data.secure_url);
-    localStorage.setItem("urrl",data.secure_url);
+    studObj.referencePic = data.secure_url;
+    localStorage.setItem("currentUser",studObj);
+    const docm = doc(db,"UNIUYO",studObj.level,studObj.dept,studObj.regNm);
+    await setDoc(docm,{
+      referencePic : data.secure_url
+    });
     console.log('Uploaded URL:', data.secure_url);
+    log('Upload successful! URL: ' + data.secure_url);
   } catch (err) {
     log('Upload failed: ' + err);
   }
