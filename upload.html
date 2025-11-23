@@ -73,9 +73,9 @@ const logEl = document.getElementById('log');
 const snapBtn = document.getElementById('snapBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('fileInput');
-const studObj = JSON.parse(localStorage.getItem('currentUser'));
+const studObj = JSON.parse(localStorage.getItem('currentUser')) || (await getDoc(docm)).data();
 alert(JSON.stringify(studObj));
-
+  
 function log(msg) {
   logEl.innerText = msg;
 }
