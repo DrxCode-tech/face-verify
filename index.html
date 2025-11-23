@@ -43,11 +43,16 @@
 <body>
   <h1>Face Verification</h1>
   <button class="btn" onclick="startVerification()">Click to Verify</button>
+  <button class="btn" onclick="takeImage()">Take image</button>
   <div id="status">Not Verified Yet</div>
 
   <script>
     function startVerification() {
       window.location.href = 'verify.html';
+    }
+
+    function takeImage() {
+      window.location.href = 'upload.html';
     }
 
     // Check if user just verified
