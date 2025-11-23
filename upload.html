@@ -65,7 +65,7 @@
 
 <script type="module">
 import { db } from './firebaseConfig.js';
-import { doc,setDoc} from 'https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js';
+import { doc,setDoc,getDoc} from 'https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js';
   
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -135,12 +135,17 @@ async function uploadToCloudinary(blob) {
       body: formData
     });
     const data = await res.json();
-    studObj.referencePic = data.secure_url;
-    localStorage.setItem("currentUser",JSON.stringify(studObj));
+    
+    //studObj.referencePic = data.secure_url;
+    
+    //localStorage.setItem("currentUser",JSON.stringify(studObj));
+    const reg = regNm.replace(/\//g,'-');
     const docm = doc(db,"UNIUYO",studObj.level,studObj.dept,studObj.regNm);
     await setDoc(docm,{
       referencePic : data.secure_url
     },{merge:true});
+    const student = await getDoc(docm);
+    localStorage.setItem('currentUser',JSON.stringify(student.data()));
     console.log('Uploaded URL:', data.secure_url);
     log('Upload successful! URL: ' + data.secure_url);
   } catch (err) {
