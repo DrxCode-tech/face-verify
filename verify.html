@@ -86,7 +86,8 @@
     }
 
     const MODELS_URI = './models';
-    const REFERENCE_IMAGE = localStorage.getItem("urrl");
+    const student = JSON.parse(dtb.getItem('currentUser'));
+    const REFERENCE_IMAGE = student.referencePic;
     const THRESHOLD = 0.45;
     let referenceDescriptor = null;
 
@@ -152,8 +153,8 @@
 
       if (distance < THRESHOLD) {
         st("Verified ✅");
-        localStorage.setItem("verified", "true");
-        setTimeout(() => window.location.href = "index.html", 1000);
+        localStorage.setItem("verifiedAdexid", "true");
+        setTimeout(() => window.location.href = "https://ade-xpage.vercel.app/V3ADEX.html", 1500);
       } else {
         st("Not matching ❌");
       }
